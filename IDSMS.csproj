@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows</TargetFramework>
+    <TargetFramework>net9.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -10,11 +10,11 @@
   </PropertyGroup>
 
   <!--
-    NuGet Install Steps (Visual Studio 2022):
+    NuGet Install Steps (Visual Studio 2026):
     Tools > NuGet Package Manager > Package Manager Console
     > Install-Package MySql.Data
   -->
   <ItemGroup>
-    <PackageReference Include="MySql.Data" Version="8.4.0" />
+    <PackageReference Include="MySql.Data" Version="9.3.0" />
   </ItemGroup>
 </Project>
