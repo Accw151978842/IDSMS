@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>IDSMS</AssemblyName>
+    <RootNamespace>IDSMS</RootNamespace>
+  </PropertyGroup>
+
+  <!--
+    NuGet Install Steps (Visual Studio 2022):
+    Tools > NuGet Package Manager > Package Manager Console
+    > Install-Package MySql.Data
+  -->
+  <ItemGroup>
+    <PackageReference Include="MySql.Data" Version="8.4.0" />
+  </ItemGroup>
+</Project>
