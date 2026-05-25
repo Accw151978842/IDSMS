@@ -7,15 +7,13 @@ namespace IDSMS
 {
     internal static class Program
     {
-        // Global session variables
-        public static string CurrentUserID   { get; set; } = string.Empty;
-        public static string CurrentUserRole { get; set; } = string.Empty;
-        public static string CurrentUserName { get; set; } = string.Empty;
+        public static string CurrentUserID   = string.Empty;
+        public static string CurrentUserRole = string.Empty;
+        public static string CurrentUserName = string.Empty;
 
         [STAThread]
         static void Main()
         {
-            // .NET Framework standard startup
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 

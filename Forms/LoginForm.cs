@@ -7,54 +7,105 @@ namespace IDSMS.Forms
 {
     public class LoginForm : Form
     {
-        private TextBox txtUser, txtPass;
-        private Label lblErr;
-        private int fails = 0;
+        private TextBox txtUser, txtPwd;
+        private Button btnLogin;
+        private Label lblMsg;
+        private int failCount = 0;
 
         public LoginForm()
         {
-            Text = "IDSMS Login"; Size = new System.Drawing.Size(420, 300);
+            Text = "IDSMS Login";
+            Size = new System.Drawing.Size(360, 260);
             StartPosition = FormStartPosition.CenterScreen;
-            FormBorderStyle = FormBorderStyle.FixedDialog; MaximizeBox = false;
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+            MaximizeBox = false;
 
-            var title = new Label { Text = "IDSMS - Premium Living Furniture",
-                Font = new System.Drawing.Font("Segoe UI", 11, System.Drawing.FontStyle.Bold),
-                Location = new System.Drawing.Point(20, 18), Size = new System.Drawing.Size(370, 30),
-                TextAlign = System.Drawing.ContentAlignment.MiddleCenter };
-            var lblU = new Label { Text = "Username:", Location = new System.Drawing.Point(60, 70), Size = new System.Drawing.Size(85, 23) };
-            txtUser = new TextBox { Location = new System.Drawing.Point(155, 67), Size = new System.Drawing.Size(180, 23) };
-            var lblP = new Label { Text = "Password:", Location = new System.Drawing.Point(60, 105), Size = new System.Drawing.Size(85, 23) };
-            txtPass = new TextBox { Location = new System.Drawing.Point(155, 102), Size = new System.Drawing.Size(180, 23), UseSystemPasswordChar = true };
-            lblErr = new Label { Text = "", ForeColor = System.Drawing.Color.Red,
-                Location = new System.Drawing.Point(60, 132), Size = new System.Drawing.Size(300, 23) };
-            var btnLogin = new Button { Text = "Login", Location = new System.Drawing.Point(155, 160),
-                Size = new System.Drawing.Size(100, 33), FlatStyle = FlatStyle.Flat,
-                BackColor = System.Drawing.Color.FromArgb(0, 120, 215), ForeColor = System.Drawing.Color.White };
-            btnLogin.Click += Login_Click; AcceptButton = btnLogin;
-            Controls.AddRange(new Control[] { title, lblU, txtUser, lblP, txtPass, lblErr, btnLogin });
+            var pnl = new Panel { Dock = DockStyle.Fill, BackColor = System.Drawing.Color.FromArgb(30, 30, 60) };
+            Controls.Add(pnl);
+
+            var lblTitle = new Label
+            {
+                Text = "IDSMS",
+                ForeColor = System.Drawing.Color.White,
+                Font = new System.Drawing.Font("Segoe UI", 18, System.Drawing.FontStyle.Bold),
+                Location = new System.Drawing.Point(120, 20),
+                Size = new System.Drawing.Size(120, 40)
+            };
+            pnl.Controls.Add(lblTitle);
+
+            pnl.Controls.Add(Lbl("User ID:", 60, 75));
+            txtUser = new TextBox { Location = new System.Drawing.Point(140, 72), Size = new System.Drawing.Size(160, 23), Text = "USR0000001" };
+            pnl.Controls.Add(txtUser);
+
+            pnl.Controls.Add(Lbl("Password:", 60, 110));
+            txtPwd = new TextBox { Location = new System.Drawing.Point(140, 107), Size = new System.Drawing.Size(160, 23), UseSystemPasswordChar = true, Text = "Admin@1234" };
+            pnl.Controls.Add(txtPwd);
+
+            btnLogin = new Button
+            {
+                Text = "Login",
+                Location = new System.Drawing.Point(120, 145),
+                Size = new System.Drawing.Size(110, 33),
+                BackColor = System.Drawing.Color.FromArgb(0, 120, 215),
+                ForeColor = System.Drawing.Color.White,
+                FlatStyle = FlatStyle.Flat
+            };
+            btnLogin.Click += BtnLogin_Click;
+            pnl.Controls.Add(btnLogin);
+
+            lblMsg = new Label { ForeColor = System.Drawing.Color.Red, Location = new System.Drawing.Point(60, 188), Size = new System.Drawing.Size(240, 23) };
+            pnl.Controls.Add(lblMsg);
+
+            txtPwd.KeyDown += (s, e) => { if (e.KeyCode == Keys.Enter) btnLogin.PerformClick(); };
         }
 
-        private void Login_Click(object? s, EventArgs e)
+        private Label Lbl(string t, int x, int y)
         {
-            if (fails >= 3) { lblErr.Text = "Account locked. Contact admin."; return; }
-            string uid = txtUser.Text.Trim(), pwd = txtPass.Text;
-            if (string.IsNullOrEmpty(uid) || string.IsNullOrEmpty(pwd)) { lblErr.Text = "Enter username and password."; return; }
+            return new Label { Text = t, ForeColor = System.Drawing.Color.White, Location = new System.Drawing.Point(x, y), Size = new System.Drawing.Size(75, 23) };
+        }
+
+        private void BtnLogin_Click(object sender, EventArgs e)
+        {
+            if (failCount >= 3)
+            {
+                MessageBox.Show("Account locked after 3 failed attempts.", "Locked", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            string uid = txtUser.Text.Trim();
+            string pwd = txtPwd.Text;
             try
             {
-                using var conn = DBConnection.GetConnection(); conn.Open();
-                using var cmd = new MySqlCommand("SELECT userID,empname,role,password FROM users WHERE userID=@u", conn);
-                cmd.Parameters.AddWithValue("@u", uid);
-                using var r = cmd.ExecuteReader();
-                if (r.Read() && pwd == r.GetString("password"))
+                using (MySqlConnection cn = DBConnection.GetConnection())
                 {
-                    Program.CurrentUserID   = r.GetString("userID");
-                    Program.CurrentUserName = r.GetString("empname");
-                    Program.CurrentUserRole = r.GetString("role");
-                    Hide(); new MainMenuForm().ShowDialog(); Close(); return;
+                    cn.Open();
+                    using (MySqlCommand cmd = new MySqlCommand(
+                        "SELECT userID,empname,role FROM users WHERE userID=@u AND password=@p LIMIT 1", cn))
+                    {
+                        cmd.Parameters.AddWithValue("@u", uid);
+                        cmd.Parameters.AddWithValue("@p", pwd);
+                        using (MySqlDataReader r = cmd.ExecuteReader())
+                        {
+                            if (r.Read())
+                            {
+                                Program.CurrentUserID   = r["userID"].ToString();
+                                Program.CurrentUserName = r["empname"].ToString();
+                                Program.CurrentUserRole = r["role"].ToString();
+                                new MainMenuForm().Show();
+                                Hide();
+                            }
+                            else
+                            {
+                                failCount++;
+                                lblMsg.Text = "Invalid credentials. Attempt " + failCount + "/3";
+                            }
+                        }
+                    }
                 }
-                fails++; lblErr.Text = $"Invalid credentials. Attempt {fails}/3.";
             }
-            catch (Exception ex) { MessageBox.Show("DB Error: " + ex.Message); }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Login error: " + ex.Message);
+            }
         }
     }
 }
