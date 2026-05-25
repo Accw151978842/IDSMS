@@ -1,20 +1,65 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net9.0-windows</TargetFramework>
-    <Nullable>enable</Nullable>
-    <UseWindowsForms>true</UseWindowsForms>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <AssemblyName>IDSMS</AssemblyName>
     <RootNamespace>IDSMS</RootNamespace>
+    <AssemblyName>IDSMS</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
-
-  <!--
-    NuGet Install Steps (Visual Studio 2026):
-    Tools > NuGet Package Manager > Package Manager Console
-    > Install-Package MySql.Data
-  -->
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="MySql.Data" Version="9.3.0" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <!-- MySql.Data: Install-Package MySql.Data in NuGet Package Manager -->
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Database\DBConnection.cs" />
+    <Compile Include="Forms\LoginForm.cs" />
+    <Compile Include="Forms\MainMenuForm.cs" />
+    <Compile Include="Forms\CustomerForm.cs" />
+    <Compile Include="Forms\QuotationForm.cs" />
+    <Compile Include="Forms\SalesOrderForm.cs" />
+    <Compile Include="Forms\InvoiceForm.cs" />
+    <Compile Include="Forms\ProductionOrderForm.cs" />
+    <Compile Include="Forms\MaterialRequestForm.cs" />
+    <Compile Include="Forms\InventoryForm.cs" />
+    <Compile Include="Forms\PurchaseOrderForm.cs" />
+    <Compile Include="Forms\SupplierForm.cs" />
+    <Compile Include="Forms\DeliveryNoteForm.cs" />
+    <Compile Include="Forms\ShipmentTrackingForm.cs" />
+    <Compile Include="Forms\ReplySlipForm.cs" />
+    <Compile Include="Forms\ComplaintForm.cs" />
+    <Compile Include="Forms\UserManagementForm.cs" />
+    <Compile Include="Forms\ReportForm.cs" />
+    <Compile Include="Program.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
