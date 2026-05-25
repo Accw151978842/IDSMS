@@ -7,20 +7,26 @@ namespace IDSMS
 {
     internal static class Program
     {
-        public static string CurrentUserID   { get; set; } = "";
-        public static string CurrentUserRole { get; set; } = "";
-        public static string CurrentUserName { get; set; } = "";
+        // Global session variables
+        public static string CurrentUserID   { get; set; } = string.Empty;
+        public static string CurrentUserRole { get; set; } = string.Empty;
+        public static string CurrentUserName { get; set; } = string.Empty;
 
         [STAThread]
         static void Main()
         {
-            ApplicationConfiguration.Initialize();
+            // .NET Framework standard startup
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+
             if (!DBConnection.TestConnection())
             {
-                MessageBox.Show("Cannot connect to database.\nCheck Database/DBConnection.cs settings.",
+                MessageBox.Show(
+                    "Cannot connect to database.\nCheck Database/DBConnection.cs settings.",
                     "DB Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+
             Application.Run(new LoginForm());
         }
     }
